@@ -4,7 +4,7 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true}));
 
-let prudacts=[
+let products=[
     {
         barcode:"21345",
         name:'milk',
@@ -41,9 +41,45 @@ let prudacts=[
         company:'anjel'
     }
 ];
+app.delete('/products/:barcode',(req,res)=>{
+    products.forEach((product, index) =>{
+        if(product.barcode === req.params.barcode){
+            products.splice(index, 1);
+            res.send(req.params.barcode + ' deleted');
+        }
+    });
+});
 
-app.get('/prudacts', (req, res) => {
-    res.send(prudacts);
+app.put('/products/:barcode',(req,res)=>{
+    products.forEach((product, index) =>{
+        if(product.barcode === req.params.barcode){
+            products[index] = req.body;
+            res.send(req.body);
+        }
+    });
+});
+
+app.post('/products',(req,res)=>{
+    for(let product of products){
+        if(product.barcode === req.body.barcode){
+            res.send("product exist");
+            return;
+        }
+    }
+    products.push(req.body);
+    res.send(req.body);
+});
+
+app.get('/products/:barcode',(req,res)=>{
+    for(let product of products){
+        if(product.barcode === req.params.barcode){
+            res.send(product);
+        }
+    }
+});
+
+app.get('/products', (req, res) => {
+    res.send(products);
 });
 
 app.get('/', (req, res) => {
